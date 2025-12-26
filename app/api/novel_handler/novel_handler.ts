@@ -1,0 +1,54 @@
+import { load, type CheerioAPI } from "cheerio";
+import { syosetsu_handler } from "./syosetsu";
+import { z } from "zod";
+import { pixiv_handler } from "./pixiv";
+import { kakuyomu_handler } from "./kakuyomu";
+import type { Route } from "../+types/decompose_url";
+
+export type NovelHandlerResultType = {
+    title: string;
+    indexPrefix: string;
+    content: string;
+    series_title_and_author: string;
+    series_title: string;
+    url: string;
+    author: string;
+    tags?: string[];
+};
+
+export async function action({ request }: Route.ActionArgs) {
+    const reqData = await request.json();
+    const url: string = reqData.url;
+    // console.log("Received URL:", url);
+    const result = await novel_handler(url, { with_Cookies: true });
+    // console.log("Handler result:", result);
+    return result;
+}
+
+/**
+ * This function takes an URL as input and extracts the novel detail of that url. This function can only accept single episode url at once and might throw error.
+ *
+ * @param url - The URL of the novel to extract details from.
+ * @returns A promise that resolves to the extracted novel details as a ResultType.
+ * @throws Will throw an error if no handler is defined for the given URL origin.
+ */
+async function novel_handler(
+    url: string,
+    { with_Cookies }: { with_Cookies?: boolean }
+): Promise<NovelHandlerResultType> {
+    const urlobj = new URL(url);
+    let result: NovelHandlerResultType | undefined = undefined;
+    switch (urlobj.origin) {
+        case "https://ncode.syosetu.com":
+            result = await syosetsu_handler(urlobj, { with_Cookies });
+            break;
+        case "https://www.pixiv.net":
+            result = await pixiv_handler(urlobj, { with_Cookies });
+            break;
+        case "https://kakuyomu.jp":
+            result = await kakuyomu_handler(urlobj, { with_Cookies });
+            break;
+    }
+    if (!result) throw new Error("handler is not defined");
+    return result;
+}
