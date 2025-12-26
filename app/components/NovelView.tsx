@@ -71,7 +71,7 @@ function NovelContentView({
             });
             const data = await response.json();
             // console.log(data)
-            return data
+            return data;
         },
     });
     const { data, error, isLoading } = query;
@@ -97,7 +97,7 @@ function NovelContentView({
                     </h2>
 
                     <h3 className="text-md font-medium mb-8 text-gray-600 break-all">
-                        {selectedNovelURL}
+                        <a target="_blank" href={selectedNovelURL}>{selectedNovelURL}</a>
                     </h3>
 
                     {data.content
