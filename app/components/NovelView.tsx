@@ -8,6 +8,7 @@ import { NovelContentLoading, SidePanelLoading } from "./NovelViewLoading";
 import { cn } from "~/lib/utils";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
+import { toast } from "sonner";
 
 type NovelViewProps = {
     url_string: string;
@@ -91,13 +92,38 @@ function NovelContentView({
             )}
             {data && (
                 <ScrollArea className="p-6 w-full min-w-0 flex-1 mx-auto overflow-auto h-full min-h-0 max-h-full">
-                    <h1 className="text-3xl font-bold mb-4">{data.title}</h1>
+                    <div className="flex justify-between">
+                        <h1 className="text-3xl font-bold mb-4">
+                            {data.title}
+                        </h1>
+                        <Button
+                            variant={"outline"}
+                            className="cursor-pointer"
+                            onClick={() => {
+                                const content =
+                                    "# " +
+                                    data.title +
+                                    "\n\n" +
+                                    data.author +
+                                    "\n\n" +
+                                    selectedNovelURL +
+                                    "\n\n" +
+                                    data.content;
+                                navigator.clipboard.writeText(content);
+                                toast.info("Copied novel content to clipboard!");
+                            }}
+                        >
+                            Copy
+                        </Button>
+                    </div>
                     <h2 className="text-xl font-semibold mb-6">
                         by {data.author}
                     </h2>
 
                     <h3 className="text-md font-medium mb-8 text-gray-600 break-all">
-                        <a target="_blank" href={selectedNovelURL}>{selectedNovelURL}</a>
+                        <a target="_blank" href={selectedNovelURL}>
+                            {selectedNovelURL}
+                        </a>
                     </h3>
 
                     {data.content
