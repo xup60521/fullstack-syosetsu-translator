@@ -9,6 +9,8 @@ import { cn } from "~/lib/utils";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
+import TranslateDialogue from "./translate-dialogue";
+import { authClient } from "~/lib/auth-client";
 
 type NovelViewProps = {
     url_string: string;
@@ -110,7 +112,9 @@ function NovelContentView({
                                     "\n\n" +
                                     data.content;
                                 navigator.clipboard.writeText(content);
-                                toast.info("Copied novel content to clipboard!");
+                                toast.info(
+                                    "Copied novel content to clipboard!"
+                                );
                             }}
                         >
                             Copy
@@ -155,6 +159,8 @@ function SidePanel({
 }): React.JSX.Element {
     const { isLoading, error, data } = useData(url_string);
     const [checkedItems, setCheckedItems] = React.useState<boolean[]>([]);
+    const [dialogueOpen, SetDialogueOpen] = React.useState(false)
+    const session = authClient.useSession()
     React.useEffect(() => {
         if (
             isLoading === false &&
@@ -243,9 +249,22 @@ function SidePanel({
                     </Label>
                 </div>
                 <div className="grow"></div>
-                <Button variant={"outline"} disabled={!checkedItems.some(item => item === true)} className="hover:cursor-pointer">
-                    Translate
-                </Button>
+                <TranslateDialogue dialogueOpen={dialogueOpen} SetDialogueOpen={SetDialogueOpen} checkedItems={checkedItems} data={data!} />
+                    <Button
+                        variant={"outline"}
+                        disabled={!checkedItems.some((item) => item === true) || !data}
+                        className="hover:cursor-pointer"
+                        onClick={() => {
+                            if (!session.data) {
+                                toast.info("Please connect to a Google Drive account in settings to continue...")
+                                return
+                            }
+                            SetDialogueOpen(true)
+                        }}
+                    >
+                        Translate
+                    </Button>
+                
             </div>
         </div>
     );

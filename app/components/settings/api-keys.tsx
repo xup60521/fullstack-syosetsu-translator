@@ -34,6 +34,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
+import { supportedProvider } from "~/lib/utils";
 
 export function APIKeysPanel(): React.JSX.Element {
     const queryClient = useQueryClient();
@@ -148,14 +149,6 @@ export function APIKeysPanel(): React.JSX.Element {
     );
 }
 
-const providers = [
-    { value: "google-ai-studio", label: "Google AI Studio" },
-    { value: "openrouter", label: "OpenRouter" },
-    { value: "mistral", label: "Mistral" },
-    { value: "cerebras", label: "Cerebras" },
-    { value: "groq", label: "Groq" },
-];
-
 const formSchema = z.object({
     provider: z.string().min(1, "Please select a provider"),
     name: z.string().min(1, "Name is required"),
@@ -232,7 +225,7 @@ function AddAPIKeyDialog({
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-4">
                         <Field>
-                            <Label htmlFor="provider">Provider</Label>
+                            <Label onClick={()=>setProviderSelectMenuOpen(true)} htmlFor="provider">Provider</Label>
                             <Select
                                 open={providerSelectMenuOpen}
                                 onOpenChange={setProviderSelectMenuOpen}
@@ -245,7 +238,7 @@ function AddAPIKeyDialog({
                                     <SelectValue placeholder="Select a provider" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    {providers.map((provider) => (
+                                    {supportedProvider.map((provider) => (
                                         <SelectItem
                                             key={provider.value}
                                             value={provider.value}
