@@ -7,7 +7,15 @@ import NovelView from "../components/NovelView";
 import z from "zod";
 import { toast } from "sonner";
 import { atomWithSearchParams } from "jotai-location";
-import { useAtom } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
+import { Link } from "react-router";
+import { Settings } from "lucide-react";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { SettingsDialog } from "~/components/settings/settings-dialog";
 
 export function meta({}: Route.MetaArgs) {
     return [
@@ -16,13 +24,16 @@ export function meta({}: Route.MetaArgs) {
     ];
 }
 
-const atom = atomWithSearchParams("url_string", "", {});
+const urlStringAtom = atomWithSearchParams("url_string", "", {});
+const settingsDialogOpenAtom = atom(false);
 
 export default function App() {
-    const [urlString, setUrlString] = useAtom(atom);
+    const [urlString, setUrlString] = useAtom(urlStringAtom);
+    const [settingsDialogOpen, setSettingsDialogOpen] = useAtom(settingsDialogOpenAtom);
     return (
         <div className="w-full h-screen flex flex-col px-3 py-2 gap-2">
             <InputBar urlString={urlString} setUrlString={setUrlString} />
+            <SettingsDialog open={settingsDialogOpen} setOpen={setSettingsDialogOpen} />
             {urlString !== "" && <NovelView url_string={urlString} />}
         </div>
     );
@@ -48,9 +59,10 @@ function InputBar({
     setUrlString: React.Dispatch<React.SetStateAction<string>>;
 }): React.JSX.Element {
     const ref = React.useRef<HTMLInputElement>(null);
+    const setSettingsDialogOpen = useSetAtom(settingsDialogOpenAtom);
     function onClickTranslate() {
         const inputValue = ref.current?.value;
-        
+
         if (inputValue && urlString_schema.safeParse(inputValue).success) {
             setUrlString(inputValue);
         } else {
@@ -75,7 +87,7 @@ function InputBar({
                 <h1 className="font-bold text-2xl font-mono w-65">
                     <a href="/">Novel Translator</a>
                 </h1>
-                <div className="flex w-full gap-2">
+                <div className="flex w-full gap-2 items-center">
                     <Input
                         placeholder="Input novel urls, separated by space flex-grow"
                         className="placeholder:text-gray-400"
@@ -89,6 +101,23 @@ function InputBar({
                     >
                         Enter
                     </Button>
+
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                onClick={()=>setSettingsDialogOpen(true)}
+                                className={cn(
+                                    "fixed top-2 right-3 h-9 px-2 hover:scale-105 transition cursor-pointer",
+                                    urlString !== "" &&
+                                        "relative top-0 right-0 "
+                                )}
+                            >
+                                <Settings />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Settings</TooltipContent>
+                    </Tooltip>
                 </div>
             </div>
         </div>

@@ -77,7 +77,7 @@ function NovelContentView({
     });
     const { data, error, isLoading } = query;
     return (
-        <div className="min-h-0 max-h-full h-full grow rounded-2xl shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_1px_-0.5px_rgba(0,0,0,0.06),0px_3px_3px_-1.5px_rgba(0,0,0,0.06),0px_6px_6px_-3px_rgba(0,0,0,0.06),0px_12px_12px_-6px_rgba(0,0,0,0.06),0px_24px_24px_-12px_rgba(0,0,0,0.06)]">
+        <div className="min-h-0 max-h-full h-full grow rounded-2xl overflow-hidden shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_1px_-0.5px_rgba(0,0,0,0.06),0px_3px_3px_-1.5px_rgba(0,0,0,0.06),0px_6px_6px_-3px_rgba(0,0,0,0.06),0px_12px_12px_-6px_rgba(0,0,0,0.06),0px_24px_24px_-12px_rgba(0,0,0,0.06)]">
             {error && (
                 <div className="p-4 text-red-600">
                     Error:{" "}
@@ -243,7 +243,7 @@ function SidePanel({
                     </Label>
                 </div>
                 <div className="grow"></div>
-                <Button variant={"outline"} className="hover:cursor-pointer">
+                <Button variant={"outline"} disabled={!checkedItems.some(item => item === true)} className="hover:cursor-pointer">
                     Translate
                 </Button>
             </div>

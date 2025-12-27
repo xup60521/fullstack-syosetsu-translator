@@ -6,4 +6,5 @@ export default [
     route("api/novel_handler", "api/novel_handler/novel_handler.ts"),
     route("login", "routes/login.tsx"),
     route("api/auth/*", "api/auth/auth-handler.ts"),
+    route("api/encrypt-api-key", "api/encrypt-api-key.ts"),
 ] satisfies RouteConfig;
